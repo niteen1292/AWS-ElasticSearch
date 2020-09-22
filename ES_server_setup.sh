@@ -13,7 +13,10 @@ autorefresh=1
 type=rpm-md
 EOF
 sudo yum install --enablerepo=elasticsearch elasticsearch -y
-/usr/share/elasticsearch/bin/elasticsearch-plugin install discovery-ec2
+yes | /usr/share/elasticsearch/bin/elasticsearch-plugin install discovery-ec2 
+sudo systemctl start elasticsearch
+
+
 cat <<EOF | sudo tee /etc/elasticsearch/elasticsearch.yml
 cluster.name: escluster
 bootstrap.memory_lock: true
@@ -25,8 +28,6 @@ cloud.node.auto_attributes: true
 logger.org.elasticsearch.discovery.ec2: "TRACE"
 discovery.ec2.availability_zones: us-west-2a,us-west-2b,us-west-2c
 EOF
-cat <<EOF | sudo tee /etc/elasticsearch/jvm.options
--Xms2g
--Xmx2g
-EOF
-sudo systemctl start elasticsearch
+
+sudo systemctl restart elasticsearch
+
